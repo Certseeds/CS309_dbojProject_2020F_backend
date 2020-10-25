@@ -1,4 +1,4 @@
-package sustech.dbojbackend.model.dto;
+package sustech.dbojbackend.model.request;
 
 import lombok.Data;
 import sustech.dbojbackend.model.SqlLanguage;
@@ -6,7 +6,7 @@ import sustech.dbojbackend.model.SqlLanguage;
 import java.io.Serializable;
 
 @Data
-public class CommitQueryObject implements Serializable {
+public class CommitQuery implements Serializable {
     public String Token;
     public Long questionId;
     public SqlLanguage language;

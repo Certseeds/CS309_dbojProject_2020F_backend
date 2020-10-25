@@ -1,4 +1,4 @@
-package sustech.dbojbackend.model.dao;
+package sustech.dbojbackend.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,7 +18,7 @@ public class CommitLog implements Serializable {
     // TODO, set the FOREIGH KEY connection
     @Id
     @GeneratedValue
-    private Long id;
+    private Long commitLogId;
     @Column(nullable = false)
     private Long userId;
     @Column(nullable = false)
@@ -26,7 +26,7 @@ public class CommitLog implements Serializable {
     @Column(nullable = false)
     private String commitCode;
     @Column(nullable = false)
-    private String commitResult;
+    private String language;
 
     public CommitLog() {
 
