@@ -29,10 +29,10 @@ import static sustech.dbojbackend.service.Token.createToken;
 @SpringBootTest(classes = DbojBackendApplication.class)
 @AutoConfigureMockMvc
 public class UserTests {
-    @Autowired
-    private MockMvc mvc;
     @Resource
     UserRepository userRepository;
+    @Autowired
+    private MockMvc mvc;
 
     @Test
     public void testLogin() throws Exception {
@@ -45,16 +45,16 @@ public class UserTests {
 
     @Test
     public void testToken() throws Exception {
-        User u=new User("12345","67890",UserLevel.NORMAL_USER);
+        User u = new User("12345", "67890", UserLevel.NORMAL_USER);
         u.setEmail(null);
         u.setId(1L);
         String token = createToken(u);
-        System.out.println(checkToken(token,"12345",1L));
+        System.out.println(checkToken(token, "12345", 1L));
     }
 
     @Test
     public void testSignIn() throws Exception {
-        SignInRequest signIn=new SignInRequest("abc","123");
+        SignInRequest signIn = new SignInRequest("abc", "123");
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -62,14 +62,15 @@ public class UserTests {
         ResultActions resultActions = mvc.perform(MockMvcRequestBuilders.post("/signin").contentType("application/json").content(requestJson));
         resultActions.andDo(MockMvcResultHandlers.print());
     }
+
     @Test
     public void testReset() throws Exception {
-        User u=new User("12345","67890",UserLevel.NORMAL_USER);
+        User u = new User("12345", "67890", UserLevel.NORMAL_USER);
         u.setEmail(null);
         u.setId(1L);
         String token = createToken(u);
 
-        ResetRequest resetRequest=new ResetRequest("12345","67890","12345",token);
+        ResetRequest resetRequest = new ResetRequest("12345", "67890", "12345", token);
 
         ObjectMapper mapper = new ObjectMapper();
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
@@ -80,8 +81,8 @@ public class UserTests {
     }
 
     @Test
-    public void testDB() throws Exception{
-        userRepository.updatePasswordById(1L,"12345");
+    public void testDB() throws Exception {
+        userRepository.updatePasswordById(1L, "12345");
     }
 
 }

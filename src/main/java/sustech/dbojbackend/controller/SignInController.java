@@ -12,7 +12,6 @@ import sustech.dbojbackend.repository.UserRepository;
 
 import javax.annotation.Resource;
 
-
 import java.util.List;
 
 import static sustech.dbojbackend.service.Token.createToken;
@@ -34,7 +33,7 @@ public class SignInController {
             throw new RuntimeException("User has exist");
         }
 
-        User u = new User(userName,passWord,UserLevel.NORMAL_USER);
+        User u = new User(userName, passWord, UserLevel.NORMAL_USER);
         u.setEmail(null);
         userRepository.save(u);
         String token = createToken(u);

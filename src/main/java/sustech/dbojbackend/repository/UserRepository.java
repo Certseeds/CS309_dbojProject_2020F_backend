@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByUserNameAndPassWord(String userName, String passWord);
 
     @Transactional(timeout = 10)
-    @Query(value="UPDATE User u SET u.passWord = :newPassword WHERE u.id = :id")
+    @Query(value = "UPDATE User u SET u.passWord = :newPassword WHERE u.id = :id")
     @Modifying
     Integer updatePasswordById(@Param(value = "id") Long id, @Param(value = "newPassword") String newPassword);
 
