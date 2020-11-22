@@ -2,11 +2,9 @@ package sustech.dbojbackend.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import sustech.dbojbackend.model.SqlLanguage;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 import java.io.Serializable;
 
@@ -17,7 +15,7 @@ public class CommitLog implements Serializable {
     private static final long serialVersionUID = 0x118341025L;
     // TODO, set the FOREIGH KEY connection
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commitLogId;
     @Column(nullable = false)
     private Long userId;
@@ -26,7 +24,7 @@ public class CommitLog implements Serializable {
     @Column(nullable = false)
     private String commitCode;
     @Column(nullable = false)
-    private String language;
+    private SqlLanguage language;
 
     public CommitLog() {
 

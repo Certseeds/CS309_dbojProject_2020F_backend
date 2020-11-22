@@ -1,4 +1,4 @@
-package sustech.dbojbackend.model.Users.request;
+package sustech.dbojbackend.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

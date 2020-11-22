@@ -1,4 +1,4 @@
-package sustech.dbojbackend.model.Users.response;
+package sustech.dbojbackend.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+public class SignInResponse {
     private String username;
     private String token;
 }
