@@ -1,19 +1,31 @@
 package sustech.dbojbackend.controller;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import sustech.dbojbackend.annotatin.needToken;
 import sustech.dbojbackend.model.State;
 import sustech.dbojbackend.model.UserLevel;
-import sustech.dbojbackend.model.data.*;
+import sustech.dbojbackend.model.data.CommitLog;
+import sustech.dbojbackend.model.data.Question;
+import sustech.dbojbackend.model.data.QuestionBuild;
+import sustech.dbojbackend.model.request.CommitCreateQuestion;
+import sustech.dbojbackend.model.request.CommitDeleteRequest;
 import sustech.dbojbackend.model.request.CommitQuery;
 import sustech.dbojbackend.model.request.CommitUpdateQuestion;
-import sustech.dbojbackend.model.request.CommitUpdateRequest;
-import sustech.dbojbackend.model.request.CommitDeleteRequest;
+import sustech.dbojbackend.model.response.CommitCreateQuestionResponse;
 import sustech.dbojbackend.model.response.CommitQueryResponse;
-import sustech.dbojbackend.repository.*;
-import sustech.dbojbackend.service.Token;
+import sustech.dbojbackend.repository.CommitLogRepository;
+import sustech.dbojbackend.repository.QuestionBuildRepository;
+import sustech.dbojbackend.repository.QuestionDetailRepository;
+import sustech.dbojbackend.repository.QuestionRepository;
+import sustech.dbojbackend.repository.UserRepository;
 
 import javax.annotation.Resource;
+
 import java.util.List;
 
 @RestController
@@ -35,71 +47,48 @@ public class CommitController {
 
     @Modifying
     @PostMapping("/query")
+    @needToken(UserLevel.NORMAL_USER)
     public CommitQueryResponse commitQuery(@RequestBody CommitQuery cqo) {
-        Token token = new Token(userRepository);
-        User user;
-        try {
-            user = token.checkToken(cqo.getToken());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
         List<Question> questionList;
-        try {
-            questionList = questionRepository.findByProgramOrder(cqo.getQuestionId());
-        } catch (Exception e) {
-            throw new RuntimeException("not exist question");
+        questionList = questionRepository.findByProgramOrder(cqo.getQuestionId());
+        if (questionList.isEmpty()) {
+            // error state
         }
-        if (questionList.size() == 0) {
-            throw new RuntimeException("not exist question");
-        }
-        Question question = questionList.get(0);
-        if (question.getLanguage() != cqo.getLanguage()) {
-            throw new RuntimeException("language not match");
-        }
-
-        CommitLog commitLog = new CommitLog();
-        commitLog.setUserId(user.getId());
-        commitLog.setQuestionOrder(cqo.getQuestionId());
-        commitLog.setCommitCode(cqo.getCommitCode());
-        commitLog.setLanguage(cqo.getLanguage());
+        /**
+         *
+         * TODO deal with the judge system
+         * */
+        var commitLog = new CommitLog(1L, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), State.SUCCESS);
         commitLogRepository.save(commitLog);
         return new CommitQueryResponse(cqo.getQuestionId(), commitLog);
     }
 
-    @PostMapping("/update")
-    public State commitUpdate(@RequestBody CommitUpdateRequest request) {
-        Token token = new Token(userRepository);
-        User user;
+    @Modifying
+    @PostMapping("/create")
+    @needToken(UserLevel.ADMIN)
+    public CommitCreateQuestionResponse CommitCreateQuestion(@RequestBody CommitCreateQuestion ccq) {
+        var question = new Question(ccq.getName(), ccq.getDescription(), ccq.getDDL());
         try {
-            user = token.checkToken(request.getToken());
+            var searchQuestion = questionRepository.save(question);
+            return new CommitCreateQuestionResponse(searchQuestion.getProgramOrder(), State.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            return new CommitCreateQuestionResponse(-1L, State.FAILED);
         }
-        if (user.getLevel() != UserLevel.ADMIN)
-            throw new RuntimeException("must be admin");
+    }
 
-
+    @PostMapping("/update")
+    @needToken(UserLevel.ADMIN)
+    public State commitUpdate(@RequestBody CommitUpdateQuestion request) {
+        Long id = request.getProgramOrder();
+        if (questionRepository.findByProgramOrder(id).isEmpty()) {
+            return State.FAILED;
+        }
         try {
-            CommitUpdateQuestion commitUpdateQuestion = request.getCommitUpdateQuestion();
-
-            Question question = new Question();
-            question.setName(commitUpdateQuestion.getName());
-            question.setDescription(commitUpdateQuestion.getDescription());
-            question.setLanguage(commitUpdateQuestion.getLanguage());
-            question.setDeadline(commitUpdateQuestion.getDDL());
-            questionRepository.save(question);
-
-            QuestionDetail questionDetail = new QuestionDetail(question.getProgramOrder(), commitUpdateQuestion.getCorrectCommand());
-            questionDetailRepository.save(questionDetail);
-
-            for (String s : commitUpdateQuestion.getGroup()) {
+            for (var s : request.getGroup()) {
                 QuestionBuild questionBuild = new QuestionBuild();
-                questionBuild.setProgramOrder(question.getProgramOrder());
+                questionBuild.setProgramOrder(request.getProgramOrder());
                 questionBuild.setBuildScript(s);
-                questionBuild.setLanguage(commitUpdateQuestion.getLanguage());
+                questionBuild.setLanguage(request.getLanguage());
                 questionBuildRepository.save(questionBuild);
             }
             return State.SUCCESS;
@@ -111,16 +100,6 @@ public class CommitController {
     @Modifying
     @DeleteMapping("/delete")
     public State commitDelete(@RequestBody CommitDeleteRequest request) {
-        Token token = new Token(userRepository);
-        User user;
-        try {
-            user = token.checkToken(request.getToken());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-        if (user.getLevel() != UserLevel.ADMIN)
-            throw new RuntimeException("must be admin");
         try {
             questionDetailRepository.deleteById(request.getQuestionOrder());
             questionBuildRepository.deleteByProgramOrder(request.getQuestionOrder());

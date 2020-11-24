@@ -4,58 +4,51 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
+import sustech.dbojbackend.model.UserLevel;
 import sustech.dbojbackend.model.data.User;
 import sustech.dbojbackend.repository.UserRepository;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+
 import java.util.Date;
 import java.util.List;
+
 @Service
 public class Token {
-
-    private final UserRepository userRepository;
-
-    private static final String tempKey = "abcdefg";
-    private static final long TOKEN_EXPIRED_TIME = 100000;
-
-    public Token(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    private static final String Issuer = "SUSTechDbojBackground";
+    private static final String tempKey = "ThisIsTheTempKeyOfTokenProduce";
+    private static final long TOKEN_EXPIRED_TIME = 60 * 60 * 24 * 1000 * 2; // 2 days
+    private static final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+    @Resource
+    UserRepository userRepository;
 
     public String createToken(User user) {
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-
         long nowMillis = System.currentTimeMillis();
-
         JwtBuilder builder = Jwts.builder()
-                .setId(Long.toString(user.getId()))
+                .claim("username", user.getUserName())
                 .setIssuedAt(new Date(nowMillis))
                 .setNotBefore(new Date(nowMillis))
                 .setExpiration(new Date(nowMillis + TOKEN_EXPIRED_TIME))
+                .setIssuer(Issuer)
+                .setSubject("TokenOfDboj")
                 .signWith(signatureAlgorithm, tempKey);
-        builder.claim("username", user.getUserName());
         return builder.compact();
     }
 
-    public User checkToken(String token) {
+    public UserLevel checkToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody();
             String name = claims.get("username", String.class);
-            Long id = Long.parseLong(claims.getId());
-            List<User> users = userRepository.findByid(id);
-            User u=users.get(0);
-            if (u != null && !u.getUserName().equals(name)) {
-                throw new RuntimeException("ID and name not match");
+            List<User> users = userRepository.findByUserName(name);
+            if (users.isEmpty()) {
+                return null;
+            } else {
+                return users.get(0).getLevel();
             }
-            return u;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("invalid token");
+            return null;
         }
     }
 }

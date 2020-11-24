@@ -2,21 +2,19 @@ package sustech.dbojbackend.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.jmx.export.naming.IdentityNamingStrategy;
-import sustech.dbojbackend.model.SqlLanguage;
-import sustech.dbojbackend.model.UserLevel;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.util.Date;
+import javax.persistence.Table;
 
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "question", schema = "public")
 public class Question {
     @Id
@@ -27,11 +25,13 @@ public class Question {
     private String name;
     @Column(name = "description", nullable = false)
     private String description;
-    @Column(name = "language", nullable = false)
-    private SqlLanguage language;
-    @Column(name = "deadline", nullable = false)
-    private Date deadline;
 
-    public Question() {
+    @Column(name = "deadline", nullable = false)
+    private Long deadline; // this is the second form standard time
+
+    public Question(String name, String description, Long deadline) {
+        this.name = name;
+        this.description = description;
+        this.deadline = deadline;
     }
 }

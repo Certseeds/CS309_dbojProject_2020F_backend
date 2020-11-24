@@ -2,13 +2,20 @@ package sustech.dbojbackend.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sustech.dbojbackend.model.SqlLanguage;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "question_build", schema = "public")
 public class QuestionBuild {
     @Id
@@ -22,7 +29,4 @@ public class QuestionBuild {
     @Column(name = "language", nullable = false)
     private SqlLanguage language;
 
-    public QuestionBuild() {
-
-    }
 }

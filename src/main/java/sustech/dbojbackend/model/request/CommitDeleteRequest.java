@@ -6,6 +6,5 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class CommitDeleteRequest {
-    String token;
     Long questionOrder;
 }
