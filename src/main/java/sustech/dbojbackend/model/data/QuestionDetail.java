@@ -2,18 +2,18 @@ package sustech.dbojbackend.model.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import sustech.dbojbackend.model.UserLevel;
+import lombok.NoArgsConstructor;
+import sustech.dbojbackend.model.SqlLanguage;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "QUESTION_DETAIL", schema = "public")
 public class QuestionDetail {
     @Id
@@ -21,8 +21,7 @@ public class QuestionDetail {
     private Long programOrder;
     @Column(name = "correct_script", nullable = false)
     private String correctScript;
+    @Column(name = "language", nullable = false)
+    private SqlLanguage language;
 
-    public QuestionDetail() {
-
-    }
 }

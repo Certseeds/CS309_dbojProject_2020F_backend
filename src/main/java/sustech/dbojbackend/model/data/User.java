@@ -39,6 +39,7 @@ public class User implements Serializable {
         this.userName = userName;
         this.passWord = passWord;
         this.level = level;
+        this.email = "";
     }
 
 }

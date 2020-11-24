@@ -1,7 +1,7 @@
 package sustech.dbojbackend.repository;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +22,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     Integer updatePasswordById(@Param(value = "id") Long id, @Param(value = "newPassword") String newPassword);
 
+
     @Transactional(timeout = 10)
     List<User> findByid(Long id);
+
 
 }
 

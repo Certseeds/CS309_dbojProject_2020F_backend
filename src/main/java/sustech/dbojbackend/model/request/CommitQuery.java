@@ -9,7 +9,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class CommitQuery implements Serializable {
-    public String Token;
+    private static final long serialVersionUID = 4162220202L;
+
     public Long questionId;
     public SqlLanguage language;
     /**

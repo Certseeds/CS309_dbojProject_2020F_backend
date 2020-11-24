@@ -6,7 +6,7 @@ import sustech.dbojbackend.model.data.CommitLog;
 
 import java.util.List;
 
-public interface CommitLogRepository extends JpaRepository<CommitLog,Long> {
+public interface CommitLogRepository extends JpaRepository<CommitLog, Long> {
     @Transactional(timeout = 10)
     List<CommitLog> findByCommitLogId(Long id);
 
