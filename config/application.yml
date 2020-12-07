@@ -5,6 +5,7 @@ spring:
     username: postgres
     password: 123
   mail:
+    protocol: smtps
     host: smtp.qq.com
     username: *
     password: *

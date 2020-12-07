@@ -11,6 +11,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,6 +23,7 @@ import sustech.dbojbackend.model.data.User;
 import sustech.dbojbackend.model.request.LoginRequest;
 import sustech.dbojbackend.model.request.ResetRequest;
 import sustech.dbojbackend.model.request.SignInRequest;
+import sustech.dbojbackend.model.response.InResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
 import sustech.dbojbackend.repository.QuestionBuildRepository;
 import sustech.dbojbackend.repository.QuestionRepository;
@@ -29,6 +32,8 @@ import sustech.dbojbackend.service.Email;
 import sustech.dbojbackend.service.Token;
 
 import javax.annotation.Resource;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -50,10 +55,14 @@ public class SessionTests {
     private Token staticToken;
     @Resource
     private Email emailResource;
-    private ObjectWriter ow;
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    private ObjectWriter ow;
 
     private static User firstUser;
     private static User illegalUser;
@@ -66,7 +75,7 @@ public class SessionTests {
 
     @BeforeEach
     public void beforeEachTEst() {
-        ObjectMapper mapper = new ObjectMapper();
+
         ow = mapper.writer().withDefaultPrettyPrinter();
     }
 
@@ -104,7 +113,7 @@ public class SessionTests {
     //@Test
     //@Order(2)
     public void testReset() throws Exception {
-        emailResource.sendEmailToResetPassword("email", firstUser);
+        emailResource.sendEmailToResetPassword(firstUser, "ohMyGod");
         String token = staticToken.createToken(firstUser);
         var resetRequest = new ResetRequest("shenmi@123.com", token);
         var requestJson = ow.writeValueAsString(resetRequest);
@@ -159,5 +168,52 @@ public class SessionTests {
                 .andExpect(MockMvcResultMatchers.status().is(403))
                 .andReturn();
         assertEquals("Exist Information", resultActions.getResponse().getContentAsString());
+    }
+
+    @Test
+    @Order(6)
+    public void testUpUserLevel() throws Exception {
+        var Login = new SignInRequest(UUID.randomUUID().toString(), UUID.randomUUID().toString(), "test@case2.com" + UUID.randomUUID().toString());
+        String requestJson = ow.writeValueAsString(Login);
+        var resultActions = mvc.perform(
+                MockMvcRequestBuilders
+                        .post("/signin")
+                        .contentType(JsonType)
+                        .content(requestJson)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        var temp = resultActions.getResponse().getContentAsString();
+        InResponse is = mapper.readValue(temp, InResponse.class);
+        System.out.println(is);
+        mvc.perform(
+                MockMvcRequestBuilders
+                        .get("/upLevel")
+                        .param("token", is.getToken())
+                        .contentType(JsonType)
+                        .content(requestJson)
+        )
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().is(302))
+                .andExpect(MockMvcResultMatchers.redirectedUrl("https://www.qq.com/"))
+                .andReturn();
+    }
+
+    @Resource
+    JavaMailSender mailSender;
+
+    @Resource
+    Token tokenResource;
+
+    @Test
+    public void testEmail() {
+        var msg = new SimpleMailMessage();
+        msg.setFrom(emailResource.emailSendAddress);
+        msg.setBcc();
+        msg.setTo(emailResource.emailSendAddress);
+        msg.setSubject("123");
+        msg.setText(String.format("%s%s", "localhost:8888/login/reset?token=", tokenResource.createTokenWithNewPassWord(firstUser, "114514")));
+        mailSender.send(msg);
     }
 }
