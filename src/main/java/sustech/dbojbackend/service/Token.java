@@ -36,6 +36,10 @@ public class Token {
         return builder.compact();
     }
 
+    public String gettokenUserName(String token) {
+        return Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody().get("username", String.class);
+    }
+
     public UserLevel checkToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody();

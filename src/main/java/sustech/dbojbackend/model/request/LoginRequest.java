@@ -10,7 +10,7 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Login implements Serializable {
+public class LoginRequest implements Serializable {
     private static final long serialVersionUID = 0x4383124211L;
     private String username;
     private String password;

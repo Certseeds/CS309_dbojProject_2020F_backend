@@ -35,11 +35,11 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String userName, String passWord, UserLevel level) {
+    public User(String userName, String passWord, String Email, UserLevel level) {
         this.userName = userName;
         this.passWord = passWord;
         this.level = level;
-        this.email = "";
+        this.email = Email;
     }
 
 }

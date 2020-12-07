@@ -8,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ResetRequest {
-    private String userName;
-    private String oldPassword;
+    private static final long serialVersionUID = 2612262102L;
+    private String email;
     private String newPassword;
-    private String token;
 }
