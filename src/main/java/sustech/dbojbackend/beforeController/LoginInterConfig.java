@@ -31,15 +31,20 @@ public class LoginInterConfig implements HandlerInterceptor {
                 if (null != token) {
                     System.out.println("token do not exist");
                     UserLevel realLevel = tokenResource.checkToken(token);
-                    if (realLevel == UserLevel.ADMIN) {
-                        return true;
-                        // admin can do everything
-                    } else if (realLevel == UserLevel.NORMAL_USER) {
-                        return realLevel == levelNeed;
-                        // normal user can just do normal user can do
-                    } else {
-                        // none can not do anything
-                        return false;
+                    switch (realLevel) {
+                        case ADMIN: {
+                            // admin can do everything
+                            return true;
+                        }
+                        case NORMAL_USER: {
+                            // normal user can just do normal user can do
+                            return realLevel == levelNeed;
+                        }
+                        case CREATE:
+                            // just created account can not do anything
+                        default: {
+                            return false;
+                        }
                     }
                 } else {
                     return false;

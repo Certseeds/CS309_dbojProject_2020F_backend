@@ -10,6 +10,7 @@ import sustech.dbojbackend.model.data.User;
 
 import javax.annotation.Resource;
 
+
 @Slf4j
 @Service
 public class Email {
@@ -19,18 +20,24 @@ public class Email {
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
-    private String emailSendAddress;
+    public String emailSendAddress;
 
-    public void sendEmailToResetPassword(String Email, User user) {
+    private static final String SubjectReset = "Click Link to Reset Password";
+    private static final String SubjectUpLevel = "Click Link to UpLevel Your Account";
+
+    private SimpleMailMessage getSimpleMailMessage(User user, String subject) {
         var msg = new SimpleMailMessage();
-        log.info("---");
-        log.info(emailSendAddress);
-        log.info("---");
         System.out.println(emailSendAddress);
+        msg.setFrom(emailSendAddress);
         msg.setBcc();
-        msg.setTo(Email);
-        msg.setSubject("Click Link to Reset Password");
-        msg.setText(tokenResource.createToken(user));
+        msg.setTo(user.getEmail());
+        msg.setSubject(subject);
+        return msg;
+    }
+
+    public void sendEmailToResetPassword(User user, String newPassword) {
+        SimpleMailMessage msg = getSimpleMailMessage(user, SubjectReset);
+        msg.setText(String.format("%s%s", "localhost:8888/login/reset?token=", tokenResource.createTokenWithNewPassWord(user, newPassword)));
         try {
             mailSender.send(msg);
         } catch (MailException ex) {
@@ -38,4 +45,14 @@ public class Email {
         }
     }
 
+
+    public void sendEmailToupLevel(User user, String token) {
+        SimpleMailMessage msg = getSimpleMailMessage(user, SubjectUpLevel);
+        msg.setText(String.format("%s%s", "localhost:8888/login/reset?token=", token));
+        try {
+            mailSender.send(msg);
+        } catch (MailException ex) {
+            System.err.println(ex.getMessage());
+        }
+    }
 }

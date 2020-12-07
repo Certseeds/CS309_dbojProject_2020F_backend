@@ -12,8 +12,4 @@ public class TestController {
         System.out.println("token = " + token + ", newPassword = " + newPassword);
         return "redirect:https://www.sojson.com/";
     }
-    @GetMapping("testjump2")
-    public String HalfAPIreset3() {
-        return "token + newPassword;";
-    }
 }

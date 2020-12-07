@@ -56,10 +56,8 @@ public class SessionController {
             // return 403 now
         }
         user = Users.get(0);
-        Long id = user.getId();
         String newP = reset.getNewPassword();
-        Integer n = userRepository.updatePasswordById(id, newP);
-        emailResource.sendEmailToResetPassword(reset.getEmail(),  user);
+        emailResource.sendEmailToResetPassword(user, newP);
         return State.SUCCESS;
     }
 
@@ -78,9 +76,10 @@ public class SessionController {
         if (!emailIllegal || !userByEmail.isEmpty() || !userByName.isEmpty()) {
             throw new globalException.ForbiddenException("Exist Information");
         }
-        var u = new User(userName, passWord, email, UserLevel.NORMAL_USER);
-        userRepository.save(u);
-        var token = tokenResource.createToken(u);
+        var user = new User(userName, passWord, email, UserLevel.CREATE);
+        userRepository.save(user);
+        var token = tokenResource.createToken(user);
+        emailResource.sendEmailToupLevel(user, token);
         return new InResponse(userName, token);
     }
 

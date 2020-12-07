@@ -36,10 +36,26 @@ public class Token {
         return builder.compact();
     }
 
+    public String createTokenWithNewPassWord(User user, String newPassword) {
+        long nowMillis = System.currentTimeMillis();
+        var builder = Jwts.builder()
+                .claim("username", user.getUserName())
+                .claim("newPassword", newPassword)
+                .setIssuedAt(new Date(nowMillis))
+                .setNotBefore(new Date(nowMillis))
+                .setExpiration(new Date(nowMillis + TOKEN_EXPIRED_TIME))
+                .setIssuer(Issuer)
+                .setSubject("TokenOfDboj")
+                .signWith(signatureAlgorithm, tempKey);
+        return builder.compact();
+    }
+
     public String gettokenUserName(String token) {
         return Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody().get("username", String.class);
     }
-
+    public String gettokenpassword(String token) {
+        return Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody().get("newPassword", String.class);
+    }
     public UserLevel checkToken(String token) {
         try {
             Claims claims = Jwts.parser().setSigningKey(tempKey).parseClaimsJws(token.trim()).getBody();
