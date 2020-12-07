@@ -1,5 +1,6 @@
 package sustech.dbojbackend.beforeController;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -13,6 +14,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@Slf4j
 @Component
 public class LoginInterConfig implements HandlerInterceptor {
     @Resource
@@ -20,6 +22,7 @@ public class LoginInterConfig implements HandlerInterceptor {
 
     //这个方法是在访问接口之前执行的，我们只需要在这里写验证登陆状态的业务逻辑，就可以在用户调用指定接口之前验证登陆状态了
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info("preHandle getted");
         if (handler instanceof HandlerMethod) {
             needToken needtoken = ((HandlerMethod) handler).getMethodAnnotation(needToken.class);
             if (null != needtoken) {
@@ -42,7 +45,7 @@ public class LoginInterConfig implements HandlerInterceptor {
                     return false;
                 }
             } else {
-                return false;
+                return true;
             }
         }
         return true;

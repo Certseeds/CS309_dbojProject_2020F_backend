@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+public class InResponse {
+    private static final long serialVersionUID = 0x348391702L;
     private String username;
     private String token;
 }

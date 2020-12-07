@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SignInRequest {
+    private static final long serialVersionUID = 0x35339172102L;
     private String userName;
     private String passWord;
+    private String email;
 }
