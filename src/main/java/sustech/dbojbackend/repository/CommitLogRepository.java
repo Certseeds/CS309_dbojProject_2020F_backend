@@ -10,5 +10,6 @@ public interface CommitLogRepository extends JpaRepository<CommitLog, Long> {
     @Transactional(timeout = 10)
     List<CommitLog> findByCommitLogId(Long id);
 
-
+    @Transactional(timeout = 10)
+    List<CommitLog> findByQuestionOrder(Long questionORder);
 }
