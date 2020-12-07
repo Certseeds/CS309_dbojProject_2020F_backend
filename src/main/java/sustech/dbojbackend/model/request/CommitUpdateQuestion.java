@@ -11,8 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommitUpdateQuestion {
-    public Long programOrder;
-    public SqlLanguage language;
-    public List<String> group;
-    public String correctCommand;
+    private Long programOrder;
+    private SqlLanguage language;
+    private List<String> group;
+    private String correctCommand;
 }

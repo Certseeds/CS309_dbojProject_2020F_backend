@@ -10,5 +10,4 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Transactional(timeout = 10)
     List<Question> findByProgramOrder(Long id);
-
 }
