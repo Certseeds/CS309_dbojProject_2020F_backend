@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sustech.dbojbackend.annotatin.needToken;
+import sustech.dbojbackend.model.CommitResultType;
 import sustech.dbojbackend.model.State;
 import sustech.dbojbackend.model.UserLevel;
 import sustech.dbojbackend.model.data.CommitLog;
@@ -58,7 +59,7 @@ public class CommitController {
          *
          * TODO deal with the judge system
          * */
-        var commitLog = new CommitLog(1L, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), State.SUCCESS);
+        var commitLog = new CommitLog(1L, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.AC);
         commitLogRepository.save(commitLog);
         return new CommitQueryResponse(cqo.getQuestionId(), commitLog);
     }

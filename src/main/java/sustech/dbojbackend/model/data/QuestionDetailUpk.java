@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import sustech.dbojbackend.model.SqlLanguage;
 
 import javax.persistence.Embeddable;
 
@@ -16,9 +17,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Embeddable
 @EqualsAndHashCode
-public class CommitResultUpk implements Serializable {
-    private static final long serialVersionUID = 0x251020171856L;
-    private Long commitLogId;
-    private Long tableOrder;
-    private String commitResult_;
+public class QuestionDetailUpk implements Serializable {
+    private static final long serialVersionUID = 0x101228210L;
+    private Long programOrder;
+    private SqlLanguage language;
 }
