@@ -13,7 +13,15 @@ public interface QuestionBuildRepository extends JpaRepository<QuestionBuild, Lo
     @Modifying
     Integer deleteByProgramOrder(Long order);
 
-
     @Transactional(timeout = 10)
-    List<QuestionBuild> findByProgramOrderAndLanguage(Long programOrder, SqlLanguage language);
+    List<QuestionBuild> findByProgramOrderAndLanguage(
+            Long programOrder,
+            SqlLanguage language
+    );
+    @Transactional(timeout = 10)
+    List<QuestionBuild> findByProgramOrderAndLanguageAndTableOrder(
+            Long programOrder,
+            SqlLanguage language,
+            Long tableOrder
+    );
 }

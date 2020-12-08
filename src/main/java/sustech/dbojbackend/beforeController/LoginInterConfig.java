@@ -29,7 +29,7 @@ public class LoginInterConfig implements HandlerInterceptor {
                 String token = request.getHeader("token");
                 UserLevel levelNeed = needtoken.value();
                 if (null != token) {
-                    System.out.println("token do not exist");
+                    System.out.println("token do exist");
                     UserLevel realLevel = tokenResource.checkToken(token);
                     switch (realLevel) {
                         case ADMIN: {
@@ -47,6 +47,7 @@ public class LoginInterConfig implements HandlerInterceptor {
                         }
                     }
                 } else {
+                    System.out.println("token do not exist");
                     return false;
                 }
             } else {
