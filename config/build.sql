@@ -33,28 +33,28 @@ CREATE TABLE COMMIT_LOG
     STATE          INT  NOT NULL
 );
 insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1,1,'select * from usertable1;',0,4);
+VALUES (1, 1, 'select * from usertable1;', 0, 4);
 insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1,1,'select * from usertable2;',1,4);
+VALUES (1, 1, 'select * from usertable2;', 1, 4);
 insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1,2,'select * from usertable3;',2,4);
+VALUES (1, 2, 'select * from usertable3;', 2, 4);
 insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1,3,'select * from usertable4;',0,4);
+VALUES (1, 3, 'select * from usertable4;', 0, 4);
 CREATE TABLE COMMIT_RESULT
 (
-    COMMIT_LOG_ID INT  NOT NULL REFERENCES COMMIT_LOG (COMMIT_LOG_ID),
-    table_ORDER   INT  NOT NULL,
+    COMMIT_LOG_ID  INT  NOT NULL REFERENCES COMMIT_LOG (COMMIT_LOG_ID),
+    table_ORDER    INT  NOT NULL,
     COMMIT_RESULT_ TEXT NOT NULL,
-    CPUTIME       INT  NOT NULL,
-    RAMSIZE       INT  NOT NULL, --INKB
+    CPUTIME        INT  NOT NULL,
+    RAMSIZE        INT  NOT NULL, --INKB
     PRIMARY KEY (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_)
 );
 insert into COMMIT_RESULT (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_, CPUTIME, RAMSIZE)
-VALUES (1,0,'error',0,0);
+VALUES (1, 0, 'error', 0, 0);
 insert into COMMIT_RESULT (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_, CPUTIME, RAMSIZE)
-VALUES (2,0,'error',0,0);
+VALUES (2, 0, 'error', 0, 0);
 insert into COMMIT_RESULT (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_, CPUTIME, RAMSIZE)
-VALUES (3,0,'error',0,0);
+VALUES (3, 0, 'error', 0, 0);
 CREATE TABLE QUESTION
 (
     PROGRAM_ORDER SERIAL PRIMARY KEY,
@@ -100,17 +100,18 @@ CREATE TABLE QUESTION_BUILD
     QUESTION_TABLE_ORDER SERIAL PRIMARY KEY,
     PROGRAM_ORDER        INT  NOT NULL REFERENCES QUESTION (PROGRAM_ORDER),
     BUILD_SCRIPT         TEXT NOT NULl,
-    LANGUAGE             INT  NOT NULL
+    LANGUAGE             INT  NOT NULL,
+    TABLE_ORDER          INT  NOT NULL
 );
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (1, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -120,16 +121,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 0);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 0, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (1, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -139,16 +140,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 1);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 1, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (1, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -158,16 +159,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 2);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 2, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (2, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -177,16 +178,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 0);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 0, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (2, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -196,16 +197,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 1);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 1, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (2, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -215,16 +216,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 2);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 2, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (3, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -234,16 +235,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 0);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 0, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (3, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -253,16 +254,16 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 1);
-Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE)
+', 1, 0);
+Insert into QUESTION_BUILD (PROGRAM_ORDER, BUILD_SCRIPT, LANGUAGE, TABLE_ORDER)
 VALUES (3, '
 CREATE TABLE usertable
 (
     USER_ID    SERIAL PRIMARY KEY,
-    USERNAME   TEXT UNIQUE NOT NULL,
-    PASSWORD   TEXT        NOT NULL,
+    USERNAME   varchar(100) UNIQUE NOT NULL,
+    PASSWORD   varchar(100)        NOT NULL,
     USER_LEVEL INT         NOT NULL,
-    EMALL      TEXT UNIQUE NOT NULL
+    EMALL      varchar(100) UNIQUE NOT NULL
 );
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345'', ''67890'', 0, ''test@case.com'');
@@ -272,7 +273,7 @@ insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
-', 2);
+', 2, 0);
 select *
 from question_build;
 select *
