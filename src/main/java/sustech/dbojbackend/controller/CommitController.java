@@ -108,10 +108,10 @@ public class CommitController {
         JudgeRequest commit = new JudgeRequest();
         correct.setLanguage(cqo.getLanguage());
         commit.setLanguage(cqo.getLanguage());
-        correct.setLimitTime(3L);
-        commit.setLimitTime(3L);
-        correct.setLimitMemory(3L);
-        commit.setLimitMemory(3L);
+        correct.setLimitTime(questionDetail.getCputime());
+        commit.setLimitTime(questionDetail.getCputime());
+        correct.setLimitMemory(questionDetail.getMemory());
+        commit.setLimitMemory(questionDetail.getMemory());
         correct.setCreateTable(questionbuild.getBuildScript());
         //.replace('\n', ' '));
         commit.setCreateTable(questionbuild.getBuildScript());
@@ -135,6 +135,8 @@ public class CommitController {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println(correctResults[0]);
+        System.out.println(correctResults[1]);
         CommitLog commitLog;
         Long userId = userRepository.findByUserName(cqo.getUsername()).get(0).getId();
         if (Objects.equals(correctResults[0], correctResults[1])) {
@@ -166,7 +168,10 @@ public class CommitController {
         if (questionRepository.findByProgramOrder(id).isEmpty()) {
             throw new globalException.NotFoundException("can not update to null");
         }
-        questionDetailRepository.save(new QuestionDetail(request.getProgramOrder(), request.getCorrectCommand(), request.getLanguage()));
+        questionDetailRepository.save(new QuestionDetail(
+                request.getProgramOrder(), request.getCorrectCommand(), request.getLanguage(),
+                request.getCputime(), request.getMomory()
+        ));
         try {
             for (var s : request.getGroup()) {
                 QuestionBuild questionBuild = new QuestionBuild();

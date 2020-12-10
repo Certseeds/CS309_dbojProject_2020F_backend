@@ -34,6 +34,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = DbojBackendApplication.class)
@@ -73,6 +75,7 @@ public class CommitTests {
     public void testDB() throws Exception {
         //questionBuildRepository.deleteByProgramOrder(3L);
     }
+
     @Test
     public void testCommitQuery() throws Exception {
         String token = staticToken.createToken(firstUser);
@@ -85,11 +88,6 @@ public class CommitTests {
         List<Thread> threadList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             threadList.add(new Thread(() -> {
-                try {
-                    Thread.sleep(2000L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 String token1 = staticToken.createToken(firstUser);
                 var commitQuery1 =
                         new CommitQuery(2L, SqlLanguage.MYSQL,
@@ -108,7 +106,7 @@ public class CommitTests {
                                     .header("token", token1)
                                     .contentType(JsonType)
                                     .content(requestJson1)
-                    )
+                    ).andDo(MockMvcResultHandlers.print())
                             .andExpect(MockMvcResultMatchers.status().isOk());
                 } catch (Exception exception) {
                     exception.printStackTrace();
@@ -118,7 +116,8 @@ public class CommitTests {
         }
         System.out.println("start finish");
         System.out.println(System.currentTimeMillis() - times);
-        for (var x: threadList){
+        for (var x : threadList) {
+            sleep(2000);
             x.start();
         }
         for (var x : threadList) {
@@ -134,7 +133,8 @@ public class CommitTests {
         group.add("sql of table 1");
         group.add("sql of table 2");
         var commitUpdateQuestion = new
-                CommitUpdateQuestion(1L, SqlLanguage.MYSQL, group, "correct script of question1 1");
+                CommitUpdateQuestion(
+                1L, SqlLanguage.MYSQL, group, "correct script of question1 1", 3L, 102400L);
 
         String requestJson = ow.writeValueAsString(commitUpdateQuestion);
 

@@ -15,4 +15,6 @@ public class CommitUpdateQuestion {
     private SqlLanguage language;
     private List<String> group;
     private String correctCommand;
+    private Long cputime;
+    private Long momory;
 }

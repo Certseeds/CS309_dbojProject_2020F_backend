@@ -75,26 +75,28 @@ CREATE TABLE QUESTION_DETAIL
     PROGRAM_ORDER  INT  NOT NULL REFERENCES QUESTION (PROGRAM_ORDER),
     CORRECT_SCRIPT TEXT NOT NULL,
     LANGUAGE       INT  NOT NULL,
+    CPUTIME        INT  NOT NULL,
+    MEMORY         INT  NOT NULL,
     PRIMARY KEY (PROGRAM_ORDER, LANGUAGE)
 );
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (1, 'select * from usertable', 0);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (1, 'select * from usertable', 1);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (1, 'select * from usertable', 2);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (2, 'select * from usertable', 0);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (2, 'select * from usertable', 1);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (2, 'select * from usertable', 2);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (3, 'select * from usertable', 0);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (3, 'select * from usertable', 1);
-Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE)
-VALUES (3, 'select * from usertable', 2);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (1, 'select * from usertable', 0, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (1, 'select * from usertable', 1, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (1, 'select * from usertable', 2, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (2, 'select * from usertable', 0, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (2, 'select * from usertable', 1, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (2, 'select * from usertable', 2, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (3, 'select * from usertable', 0, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (3, 'select * from usertable', 1, 3, 1024000);
+Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
+VALUES (3, 'select * from usertable', 2, 3, 1024000);
 CREATE TABLE QUESTION_BUILD
 (
     QUESTION_TABLE_ORDER SERIAL PRIMARY KEY,
