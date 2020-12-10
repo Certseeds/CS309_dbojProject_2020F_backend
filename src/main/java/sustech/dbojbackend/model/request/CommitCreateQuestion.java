@@ -13,6 +13,5 @@ public class CommitCreateQuestion implements Serializable {
     private static final long serialVersionUID = 7191224202L;
     private String name;
     private String description;
-    private List<String> group;
     private Long DDL;
 }

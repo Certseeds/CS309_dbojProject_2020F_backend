@@ -2,11 +2,13 @@ package sustech.dbojbackend.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import sustech.dbojbackend.model.SqlLanguage;
 
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class CommitQuery implements Serializable {
     private static final long serialVersionUID = 4162220202L;
@@ -18,4 +20,5 @@ public class CommitQuery implements Serializable {
      */
     public Integer testOrRun;
     public String commitCode;
+    public String username;
 }
