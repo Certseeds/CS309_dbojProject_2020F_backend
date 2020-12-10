@@ -26,4 +26,9 @@ public class QuestionDetail {
     @Id
     @Column(name = "language", nullable = false)
     private SqlLanguage language;
+    @Column(name = "cputime", nullable = false)
+    private Long cputime;
+    @Column(name = "memory", nullable = false)
+    private Long memory;
+
 }
