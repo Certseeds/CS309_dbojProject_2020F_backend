@@ -1,8 +1,16 @@
+POST http://localhost:8888/signin
+Content-Type: application/json
+
+{}
+
+###
 # curl -X GET http://localhost:8888/needToken -H "token:12345"
 GET http://localhost:8888/needToken
 token: 12345
 
+
 ###
+
 
 # curl -X GET http://localhost;8888/needToken -H token=123
 GET http://localhost:8888/needToken

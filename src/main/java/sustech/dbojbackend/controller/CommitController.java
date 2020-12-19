@@ -1,5 +1,7 @@
 package sustech.dbojbackend.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +28,7 @@ import sustech.dbojbackend.model.request.CommitQuery;
 import sustech.dbojbackend.model.request.CommitUpdateQuestion;
 import sustech.dbojbackend.model.request.JudgeRequest;
 import sustech.dbojbackend.model.response.CommitQueryResponse;
+import sustech.dbojbackend.model.response.JudgeSystemResultResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
 import sustech.dbojbackend.repository.QuestionBuildRepository;
 import sustech.dbojbackend.repository.QuestionDetailRepository;
@@ -81,10 +84,12 @@ public class CommitController {
         return commitLogRepository.findByUserIdAndQuestionOrder(user.getId(), questionOrder);
     }
 
+
     @Modifying
-    @PostMapping("/query")
+    @PostMapping("/query/{quesid}")
     @needToken(UserLevel.NORMAL_USER)
-    public CommitQueryResponse commitQuery(@RequestBody CommitQuery cqo) {
+    public CommitQueryResponse commitQuery(@PathVariable("quesid") Long useless
+            , @RequestBody CommitQuery cqo) {
         var questionList = questionRepository.findByProgramOrder(cqo.getQuestionId());
         if (questionList.isEmpty()) {
             throw new globalException.NotFoundException("program number not found");
@@ -137,9 +142,21 @@ public class CommitController {
         }
         System.out.println(correctResults[0]);
         System.out.println(correctResults[1]);
+        ObjectMapper mapper = new ObjectMapper();
+        JudgeSystemResultResponse result1 = null;
+        JudgeSystemResultResponse result2 = null;
+        try {
+            result1 = mapper.readValue(correctResults[0], JudgeSystemResultResponse.class);
+            result2 = mapper.readValue(correctResults[1], JudgeSystemResultResponse.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         CommitLog commitLog;
         Long userId = userRepository.findByUserName(cqo.getUsername()).get(0).getId();
-        if (Objects.equals(correctResults[0], correctResults[1])) {
+        assert result1 != null;
+        assert result2 != null;
+        System.out.println(result1.getData().equals(result2.getData()));
+        if (Objects.equals(result1.getData(), result2.getData())) {
             commitLog = new CommitLog(userId, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.AC);
         } else {
             commitLog = new CommitLog(userId, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.WA);

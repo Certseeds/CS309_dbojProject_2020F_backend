@@ -13,8 +13,8 @@ import javax.persistence.Table;
 
 @Entity
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "question", schema = "public")
 public class Question {
     @Id
@@ -34,4 +34,5 @@ public class Question {
         this.description = description;
         this.deadline = deadline;
     }
+
 }

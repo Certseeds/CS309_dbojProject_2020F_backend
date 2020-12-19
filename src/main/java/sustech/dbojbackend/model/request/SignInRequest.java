@@ -11,7 +11,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class SignInRequest  implements Serializable {
     private static final long serialVersionUID = 0x35339172102L;
-    private String userName;
-    private String passWord;
+    private String username;
+    private String password;
     private String email;
 }

@@ -8,5 +8,5 @@ import sustech.dbojbackend.model.data.CommitLog;
 @AllArgsConstructor
 public class CommitQueryResponse {
     Long questionOrder;
-    CommitLog commitLog;
+        CommitLog commitLog;
 }
