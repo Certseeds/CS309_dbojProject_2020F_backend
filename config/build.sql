@@ -16,13 +16,13 @@ CREATE TABLE USER_TABLE
     EMALL      TEXT UNIQUE NOT NULL
 );
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
-VALUES ('12345', '67890', 0, 'test@case.com');
+VALUES ('12345', md5('67890'), 0, 'test@case.com');
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
-VALUES ('1234567', '67890', 0, 'test@case2.com');
+VALUES ('1234567', md5('67890'), 0, 'test@case2.com');
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
-VALUES ('12345678', '67890', 0, 'test@case3.com');
+VALUES ('12345678', md5('67890'), 0, 'test@case3.com');
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
-VALUES ('123456789', '67890', 1, 'test@case4.com');
+VALUES ('123456789', md5('67890'), 1, 'test@case4.com');
 CREATE TABLE COMMIT_LOG
 (
     COMMIT_LOG_ID  SERIAL PRIMARY KEY,
@@ -58,16 +58,16 @@ VALUES (3, 0, 'error', 0, 0);
 CREATE TABLE QUESTION
 (
     PROGRAM_ORDER SERIAL PRIMARY KEY,
-    NAME          TEXT    NOT NULL,
-    DESCRIPTION   TEXT    NOT NULL,
-    DEADLINE      INTEGER NOT NULL
+    NAME          TEXT   NOT NULL,
+    DESCRIPTION   TEXT   NOT NULL,
+    DEADLINE      BIGINT NOT NULL
 );
 INSERT INTO QUESTION (NAME, DESCRIPTION, DEADLINE)
-VALUES ('homework1', 'this is the 1st homework', 100);
+VALUES ('homework1', 'this is the 1st homework', cast(extract(epoch from now()) + 86400 as bigint));
 INSERT INTO QUESTION (NAME, DESCRIPTION, DEADLINE)
-VALUES ('homework2', 'this is the 2nd homework', 200);
+VALUES ('homework2', 'this is the 2nd homework', cast(extract(epoch from now()) + 43200 as bigint));
 INSERT INTO QUESTION (NAME, DESCRIPTION, DEADLINE)
-VALUES ('homework3', 'this is the 3rd homework', 300);
+VALUES ('homework3', 'this is the 3rd homework', cast(extract(epoch from now()) + 21600 as bigint));
 select *
 from question;
 CREATE TABLE QUESTION_DETAIL

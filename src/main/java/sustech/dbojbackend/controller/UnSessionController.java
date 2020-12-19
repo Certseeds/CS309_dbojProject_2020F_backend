@@ -4,10 +4,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import sustech.dbojbackend.exception.globalException;
+import sustech.dbojbackend.model.SqlLanguage;
 import sustech.dbojbackend.model.data.Question;
+import sustech.dbojbackend.model.response.TimaAndMemoryResponse;
 import sustech.dbojbackend.model.response.infoResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
 import sustech.dbojbackend.repository.CommitResultRepository;
+import sustech.dbojbackend.repository.QuestionDetailRepository;
 import sustech.dbojbackend.repository.QuestionRepository;
 
 import javax.annotation.Resource;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @RestController
 public class UnSessionController {
@@ -26,6 +30,35 @@ public class UnSessionController {
     CommitLogRepository commitLogRepository;
     @Resource
     CommitResultRepository commitResultRepository;
+
+    @Resource
+    QuestionDetailRepository questionDetailRepository;
+
+    static Supplier<ConcurrentHashMap<String, SqlLanguage>> func = () -> {
+        var result = new ConcurrentHashMap<String, SqlLanguage>();
+        result.put("MySQL", SqlLanguage.MYSQL);
+        result.put("SQLite", SqlLanguage.SQLITE);
+        result.put("PostgreSQL", SqlLanguage.POSTGRESQL);
+        return result;
+    };
+    private static final ConcurrentHashMap<String, SqlLanguage> language = func.get();
+
+
+    @GetMapping("/problems/info/{questionid}/{language}")
+    public TimaAndMemoryResponse problemsTimeAndMemoryGet(@PathVariable("questionid") Long qid, @PathVariable("language") String str) {
+        if (!language.containsKey(str)) {
+            throw new globalException.NotFoundException("SQL language do not support");
+        } else if (questionRepository.findByProgramOrder(qid).isEmpty()) {
+            throw new globalException.NotFoundException("Program Order not Found!");
+        }
+        var valueOfLanguage = language.get(str);
+        var details = questionDetailRepository.findByProgramOrderAndLanguage(qid, valueOfLanguage);
+        if (details.isEmpty()) {
+            throw new globalException.NotFoundException("Program Order And Language do not match!!");
+        }
+        var detail = details.get(0);
+        return new TimaAndMemoryResponse(detail.getCputime(), detail.getMemory());
+    }
 
     @GetMapping("/problems/{question_order}")
     public Question problemsDetail(@PathVariable("question_order") String question_order) {

@@ -1,10 +1,12 @@
 package sustech.dbojbackend.controller;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.jdbc.repository.query.Modifying;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sustech.dbojbackend.exception.globalException;
 import sustech.dbojbackend.model.State;
@@ -20,8 +22,9 @@ import sustech.dbojbackend.service.Token;
 
 import javax.annotation.Resource;
 
+@Slf4j
+@CrossOrigin(origins = "", maxAge = 3600, allowCredentials = "true")
 @RestController
-@RequestMapping()
 public class SessionController {
 
     @Resource
@@ -30,7 +33,10 @@ public class SessionController {
     Email emailResource;
     @Resource
     Token tokenResource;
-
+    @GetMapping("/logout")
+    public String justsoso(){
+        return "";
+    }
     @PostMapping("/login")
     public InResponse Login(@RequestBody LoginRequest l) {
         User user;
@@ -46,7 +52,7 @@ public class SessionController {
     }
 
     @Modifying
-    @PostMapping("login/reset")
+    @PostMapping("/login/reset")
     public State reset(@RequestBody ResetRequest reset) {
         // i dont know why i want to check token at that time
         User user;
@@ -64,8 +70,9 @@ public class SessionController {
     @Modifying
     @PostMapping("/signin")
     public InResponse signIn(@RequestBody SignInRequest request) {
-        String userName = request.getUserName();
-        String passWord = request.getPassWord();
+        log.info(request.toString());
+        String userName = request.getUsername();
+        String passWord = request.getPassword();
         String email = request.getEmail();
         var userByName = userRepository.findByUserName(userName);
         // no same name
