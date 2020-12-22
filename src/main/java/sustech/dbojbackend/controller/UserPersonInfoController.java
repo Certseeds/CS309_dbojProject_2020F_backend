@@ -56,4 +56,14 @@ public class UserPersonInfoController {
         return new StatisticsAnalysisResponse(submission, hashmap);
     }
 
+    @GetMapping("/persona/all/all")
+    public StatisticsAnalysisResponse commithistoryOfAllUsers() {
+        var commitLog = commitLogRepository.findAll();
+        Long submission = (long) commitLog.size();
+        var hashmap = new HashMap<CommitResultType, Long>();
+        for (var x : CommitResultType.values()) {
+            hashmap.put(x, commitLog.stream().filter(cl -> cl.getState() == x).count());
+        }
+        return new StatisticsAnalysisResponse(submission, hashmap);
+    }
 }

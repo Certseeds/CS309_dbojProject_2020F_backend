@@ -15,6 +15,8 @@ CREATE TABLE USER_TABLE
     USER_LEVEL INT         NOT NULL,
     EMALL      TEXT UNIQUE NOT NULL
 );
+select *
+from user_table;
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES ('12345', md5('67890'), 0, 'test@case.com');
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
@@ -25,21 +27,22 @@ insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES ('123456789', md5('67890'), 1, 'test@case4.com');
 CREATE TABLE COMMIT_LOG
 (
-    COMMIT_LOG_ID  SERIAL PRIMARY KEY,
-    USER_ID        INT  NOT NULL REFERENCES USER_TABLE (USER_ID),
-    QUESTION_ORDER INT  NOT NULL,
-    COMMIT_CODE    TEXT NOT NULL,
-    LANGUAGE       INT  NOT NULL,
-    STATE          INT  NOT NULL
+    COMMIT_LOG_ID    SERIAL PRIMARY KEY,
+    USER_ID          INT    NOT NULL REFERENCES USER_TABLE (USER_ID),
+    QUESTION_ORDER   INT    NOT NULL,
+    COMMIT_CODE      TEXT   NOT NULL,
+    LANGUAGE         INT    NOT NULL,
+    STATE            INT    NOT NULL,
+    SECONDS_FROM_STD BIGINT NOT NULL
 );
-insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1, 1, 'select * from usertable1;', 0, 4);
-insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1, 1, 'select * from usertable2;', 1, 4);
-insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1, 2, 'select * from usertable3;', 2, 4);
-insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE)
-VALUES (1, 3, 'select * from usertable4;', 0, 4);
+insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE, SECONDS_FROM_STD)
+VALUES (1, 1, 'select * from usertable1;', 0, 4, cast(extract(epoch from now()) - 114514 as bigint));
+insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE, SECONDS_FROM_STD)
+VALUES (1, 1, 'select * from usertable2;', 1, 4, cast(extract(epoch from now()) - 191981 as bigint));
+insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE, SECONDS_FROM_STD)
+VALUES (1, 2, 'select * from usertable3;', 2, 4, cast(extract(epoch from now()) - 136798 as bigint));
+insert into COMMIT_LOG (USER_ID, QUESTION_ORDER, COMMIT_CODE, LANGUAGE, STATE, SECONDS_FROM_STD)
+VALUES (1, 3, 'select * from usertable4;', 0, 4, cast(extract(epoch from now()) - 214215 as bigint));
 CREATE TABLE COMMIT_RESULT
 (
     COMMIT_LOG_ID  INT  NOT NULL REFERENCES COMMIT_LOG (COMMIT_LOG_ID),
@@ -55,6 +58,7 @@ insert into COMMIT_RESULT (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_, CPUTIME, 
 VALUES (2, 0, 'error', 0, 0);
 insert into COMMIT_RESULT (COMMIT_LOG_ID, table_ORDER, COMMIT_RESULT_, CPUTIME, RAMSIZE)
 VALUES (3, 0, 'error', 0, 0);
+select * from COMMIT_RESULT;
 CREATE TABLE QUESTION
 (
     PROGRAM_ORDER SERIAL PRIMARY KEY,

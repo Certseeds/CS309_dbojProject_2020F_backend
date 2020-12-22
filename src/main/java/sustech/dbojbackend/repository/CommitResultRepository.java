@@ -9,4 +9,5 @@ import java.util.List;
 public interface CommitResultRepository extends JpaRepository<CommitResult, Long> {
     @Transactional(timeout = 10)
     List<CommitResult> findByCommitLogId(Long id);
+
 }

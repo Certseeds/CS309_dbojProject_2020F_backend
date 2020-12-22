@@ -37,6 +37,8 @@ public class CommitLog implements Serializable {
     private SqlLanguage language;
     @Column(name = "state", nullable = false)
     private CommitResultType state;
+    @Column(name = "seconds_from_std", nullable = false)
+    private Long seconds;
 
     public CommitLog(Long userId, Long questionOrder,
                      String commitCode, SqlLanguage sql,
@@ -46,5 +48,6 @@ public class CommitLog implements Serializable {
         this.commitCode = commitCode;
         this.language = sql;
         this.state = state;
+        this.seconds = java.time.Instant.now().getEpochSecond();
     }
 }

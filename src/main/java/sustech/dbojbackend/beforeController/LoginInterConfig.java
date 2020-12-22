@@ -31,6 +31,9 @@ public class LoginInterConfig implements HandlerInterceptor {
                 if (null != token) {
                     System.out.println("token do exist");
                     UserLevel realLevel = tokenResource.checkToken(token);
+                    if (null == realLevel) {
+                        return false;
+                    }
                     switch (realLevel) {
                         case ADMIN: {
                             // admin can do everything

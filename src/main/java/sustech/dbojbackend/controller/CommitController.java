@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import sustech.dbojbackend.annotatin.needToken;
@@ -19,6 +18,7 @@ import sustech.dbojbackend.model.SqlLanguage;
 import sustech.dbojbackend.model.State;
 import sustech.dbojbackend.model.UserLevel;
 import sustech.dbojbackend.model.data.CommitLog;
+import sustech.dbojbackend.model.data.CommitResult;
 import sustech.dbojbackend.model.data.Question;
 import sustech.dbojbackend.model.data.QuestionBuild;
 import sustech.dbojbackend.model.data.QuestionDetail;
@@ -27,9 +27,13 @@ import sustech.dbojbackend.model.request.CommitDeleteRequest;
 import sustech.dbojbackend.model.request.CommitQuery;
 import sustech.dbojbackend.model.request.CommitUpdateQuestion;
 import sustech.dbojbackend.model.request.JudgeRequest;
+import sustech.dbojbackend.model.request.judgeStatusCodesRequest;
+import sustech.dbojbackend.model.request.usernameWarpperRequest;
 import sustech.dbojbackend.model.response.CommitQueryResponse;
 import sustech.dbojbackend.model.response.JudgeSystemResultResponse;
+import sustech.dbojbackend.model.response.judgestatusCodesResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
+import sustech.dbojbackend.repository.CommitResultRepository;
 import sustech.dbojbackend.repository.QuestionBuildRepository;
 import sustech.dbojbackend.repository.QuestionDetailRepository;
 import sustech.dbojbackend.repository.QuestionRepository;
@@ -38,6 +42,7 @@ import sustech.dbojbackend.repository.UserRepository;
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,6 +55,8 @@ public class CommitController {
     CommitLogRepository commitLogRepository;
 
     @Resource
+    CommitResultRepository commitResultRepository;
+    @Resource
     QuestionRepository questionRepository;
 
     @Resource
@@ -61,9 +68,10 @@ public class CommitController {
     @Resource
     private RestTemplate restTemplate;
 
-    @GetMapping("/history")
+    @PostMapping("/history")
     @needToken(UserLevel.NORMAL_USER)
-    public List<CommitLog> commithistory(@RequestParam String username) {
+    public List<CommitLog> commithistory(@RequestBody usernameWarpperRequest usernameWarpper) {
+        var username = usernameWarpper.getUsername();
         var users = userRepository.findByUserName(username);
         if (users.isEmpty()) {
             throw new globalException.NotFoundException("Wrong UserName");
@@ -72,16 +80,40 @@ public class CommitController {
         return commitLogRepository.findByUserId(user.getId());
     }
 
-    @GetMapping("/history/{order}")
+    @PostMapping("/history/{order}")
     @needToken(UserLevel.NORMAL_USER)
     public List<CommitLog> commithistory(@PathVariable(value = "order") Long questionOrder,
-                                         @RequestParam String username) {
+                                         @RequestBody usernameWarpperRequest usernameWarpper) {
+        var username = usernameWarpper.getUsername();
         var users = userRepository.findByUserName(username);
         if (users.isEmpty()) {
             throw new globalException.NotFoundException("Wrong UserName");
         }
         var user = users.get(0);
         return commitLogRepository.findByUserIdAndQuestionOrder(user.getId(), questionOrder);
+    }
+
+    @PostMapping("/judgestatuscode/{order}")
+    @needToken(UserLevel.NORMAL_USER)
+    public judgestatusCodesResponse judgestatusCodes(@PathVariable(value = "order") Long questionOrder,
+                                                     @RequestBody judgeStatusCodesRequest judgeStatusCodesrequest) {
+        var username = judgeStatusCodesrequest.getUsername();
+        var users = userRepository.findByUserName(username);
+        if (users.isEmpty()) {
+            throw new globalException.NotFoundException("Wrong UserName");
+        }
+        var questionId = questionOrder;
+        var listCommitResult = commitResultRepository.findByCommitLogId(questionId);
+        var listCommitLog = commitLogRepository.findByCommitLogId(questionId);
+        if (listCommitResult.isEmpty() || listCommitLog.isEmpty()) {
+            throw new globalException.NotFoundException("Do not exist CommitResult");
+        }
+        var commitResult = listCommitResult.get(0);
+        var commitLog = listCommitLog.get(0);
+        var judgeStatusCoderesponse = new judgestatusCodesResponse(
+                questionId, commitResult.getCputime(), commitResult.getRamsize(), commitLog.getCommitCode()
+        );
+        return judgeStatusCoderesponse;
     }
 
 
@@ -153,17 +185,40 @@ public class CommitController {
         }
         CommitLog commitLog;
         Long userId = userRepository.findByUserName(cqo.getUsername()).get(0).getId();
+
         assert result1 != null;
         assert result2 != null;
+        commitLog = new CommitLog(userId, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.WA);
         System.out.println(result1.getData().equals(result2.getData()));
-        if (Objects.equals(result1.getData(), result2.getData())) {
-            commitLog = new CommitLog(userId, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.AC);
-        } else {
-            commitLog = new CommitLog(userId, cqo.getQuestionId(), cqo.getCommitCode(), cqo.getLanguage(), CommitResultType.WA);
+        if (result2.getState() != 0) {
+            commitLog.setState(CommitResultType.values()[result2.getState()]);
+        } else if (result2.getTime() > questionDetail.getCputime() * 1000) {// s -> ms
+            commitLog.setState(CommitResultType.TLE);
+        } else if (result2.getMemory() > questionDetail.getMemory()) {
+            commitLog.setState(CommitResultType.MLE);
+        } else if (Objects.equals(result1.getData(), result2.getData())) {
+            commitLog.setState(CommitResultType.AC);
+        }
+        if (commitLog.getState() == CommitResultType.TLE) {
+            result2.setTime(questionDetail.getCputime().intValue() * 1000 + 1);
+        } else if (commitLog.getState() == CommitResultType.MLE) {
+            result2.setMemory(questionDetail.getMemory().intValue() + 1);
         }
         commitLogRepository.save(commitLog);
+        var commitLogMax = commitLogRepository.findAll()
+                .stream()
+                .max(Comparator.comparing(CommitLog::getCommitLogId))
+                .get().getCommitLogId();
+        CommitResult commitResult = new CommitResult(commitLogMax,
+                0L,
+                "",
+                result2.getTime().longValue(),
+                result2.getMemory().longValue()
+        );
+        commitResultRepository.save(commitResult);
         return new CommitQueryResponse(cqo.getQuestionId(), commitLog);
     }
+
 
     @Modifying
     @PostMapping("/create")
