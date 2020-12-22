@@ -74,7 +74,7 @@ public class UnSessionController {
         return questionRepository.findAll();
     }
 
-    @GetMapping("info")
+    @GetMapping("/info")
     public List<infoResponse> getAllInfo() {
         var temp = commitLogRepository.findAll();
         var temp2 = commitResultRepository.findAll();
