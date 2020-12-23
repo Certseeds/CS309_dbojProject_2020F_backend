@@ -4,8 +4,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import sustech.dbojbackend.exception.globalException;
+import sustech.dbojbackend.model.CommitResultType;
 import sustech.dbojbackend.model.SqlLanguage;
 import sustech.dbojbackend.model.data.Question;
+import sustech.dbojbackend.model.response.QuestionWithAcNumberAndSubmission;
 import sustech.dbojbackend.model.response.TimaAndMemoryResponse;
 import sustech.dbojbackend.model.response.infoResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
@@ -70,8 +72,16 @@ public class UnSessionController {
     }
 
     @GetMapping("/problems")
-    public List<Question> problemsList() {
-        return questionRepository.findAll();
+    public List<QuestionWithAcNumberAndSubmission> problemsList() {
+        var will_return = new ArrayList<QuestionWithAcNumberAndSubmission>();
+        var tempquestions = questionRepository.findAll();
+        for (var question : tempquestions) {
+            var commitLogs = commitLogRepository.findByQuestionOrder(question.getProgramOrder());
+            var acNumber = commitLogs.stream().filter(x -> x.getState() == CommitResultType.AC).count();
+            var submission = commitLogs.size();
+            will_return.add(new QuestionWithAcNumberAndSubmission(question, acNumber, (long) submission));
+        }
+        return will_return;
     }
 
     @GetMapping("/info")
@@ -94,7 +104,7 @@ public class UnSessionController {
         return new ArrayList<>(questionOrderToinfo.values());
     }
 
-    @GetMapping("info/{questionOrder}")
+    @GetMapping("/info/{questionOrder}")
     public infoResponse getAllInfo(@PathVariable(value = "questionOrder") Long order) {
         var will_return = new infoResponse(order);
         var commitLogs = commitLogRepository.findByQuestionOrder(order);
@@ -112,4 +122,5 @@ public class UnSessionController {
         }
         return will_return;
     }
+
 }
