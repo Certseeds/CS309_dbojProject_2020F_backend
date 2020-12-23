@@ -30,7 +30,6 @@ public class JudgeController {
     QuestionRepository questionRepository;
     private final Map<Long, String> languageMap = new HashMap<>() {
         private static final long serialVersionUID = -6626340725699254149L;
-
         {
             put(0L, "MYSQL");
             put(1L, "SQLITE");
@@ -44,15 +43,15 @@ public class JudgeController {
         language = language.equals("") ? null : language;
         List<Judgestatus> judgestatusResponse = new ArrayList<>();
         var logs = commitLogRepository.findAll();
-        for (CommitLog l : logs) {
-            var userName = userRepository.findByid(l.getUserId()).get(0).getUserName();
+        for (var commitLog : logs) {
+            var userName = userRepository.findByid(commitLog.getUserId()).get(0).getUserName();
             if (user != null && !userName.equals(user)) continue;
-            var lan = languageMap.get(l.getLanguage().getValue());
+            var lan = languageMap.get(commitLog.getLanguage().getValue());
             if (language != null && !lan.equals(language.toUpperCase())) continue;
-            var prob = questionRepository.findByProgramOrder(l.getQuestionOrder()).get(0);
+            var prob = questionRepository.findByProgramOrder(commitLog.getQuestionOrder()).get(0);
             if (problem != null && !prob.getProgramOrder().equals(problem)) continue;
             if (problemtitle != null && !prob.getName().equals(problemtitle)) continue;
-            var results = commitResultRepository.findByCommitLogId(l.getCommitLogId());
+            var results = commitResultRepository.findByCommitLogId(commitLog.getCommitLogId());
             if (results.isEmpty()) {
                 continue;
             }
@@ -61,11 +60,11 @@ public class JudgeController {
                 temp.setUser(userName);//user name
                 temp.setProblem(prob.getName()); //question name
                 temp.setTable(r.getTableOrder().toString());//table order
-                temp.setResult(r.getCommitResult_());//result
+                temp.setResult(commitLog.getState());//result
                 temp.setTime(r.getCputime());
                 temp.setMemory(r.getRamsize());
                 temp.setLanguage(lan);
-                temp.setLength(l.getCommitCode().length());
+                temp.setLength(commitLog.getCommitCode().length());
                 judgestatusResponse.add(temp);
             }
         }

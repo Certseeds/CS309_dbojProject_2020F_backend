@@ -32,6 +32,7 @@ public class LoginInterConfig implements HandlerInterceptor {
                     System.out.println("token do exist");
                     UserLevel realLevel = tokenResource.checkToken(token);
                     if (null == realLevel) {
+                        response.setStatus(403);
                         return false;
                     }
                     switch (realLevel) {
@@ -40,17 +41,23 @@ public class LoginInterConfig implements HandlerInterceptor {
                             return true;
                         }
                         case NORMAL_USER: {
-                            // normal user can just do normal user can do
-                            return realLevel == levelNeed;
+                            if (realLevel == levelNeed) {
+                                return true;
+                            } else {
+                                response.setStatus(403);
+                                return false;
+                            }
                         }
                         case CREATE:
                             // just created account can not do anything
                         default: {
+                            response.setStatus(403);
                             return false;
                         }
                     }
                 } else {
                     System.out.println("token do not exist");
+                    response.setStatus(403);
                     return false;
                 }
             } else {

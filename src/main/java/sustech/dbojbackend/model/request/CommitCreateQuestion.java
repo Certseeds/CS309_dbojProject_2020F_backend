@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CommitCreateQuestion implements Serializable {
     private static final long serialVersionUID = 7191224202L;
-    private String name;
+    private String questionTitle;
     private String description;
-    private Long DDL;
+    private Long deadline;
 }

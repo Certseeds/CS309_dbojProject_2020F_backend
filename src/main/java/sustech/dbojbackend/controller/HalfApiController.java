@@ -22,7 +22,7 @@ public class HalfApiController {
     private final static String badupLevelInformation = "UpLevel Account NotFound";
     private final static String tooMuchTimeupLevelInformation = "UpLevel Account NotFound";
 
-    @GetMapping("login/reset")
+    @GetMapping("/login/reset")
     public String HalfAPIreset(@RequestParam String token) {
         if (null == tokenResource.checkToken(token)) {
             throw new globalException.ForbiddenException(resetInformation);
@@ -30,11 +30,11 @@ public class HalfApiController {
         // do not nned to check user exist , checkToken had done that
         String newPassword = tokenResource.gettokenpassword(token);
         userRepository.updatePasswordByUsername(tokenResource.gettokenUserName(token), newPassword);
-        return "redirect:https://www.baidu.com/";
+        return "redirect:http://localhost:8080/";
     }
 
     @Modifying
-    @GetMapping("upLevel")
+    @GetMapping("/upLevel")
     public String halfApiUpLevel(@RequestParam String token) {
         if (null == tokenResource.checkToken(token)) {
             throw new globalException.NotFoundException(badupLevelInformation);
@@ -44,7 +44,7 @@ public class HalfApiController {
         }
         var user = userRepository.findByUserName(tokenResource.gettokenUserName(token)).get(0);
         userRepository.updateLevelById(user.getId(), UserLevel.NORMAL_USER);
-        return "redirect:https://www.qq.com/";
+        return "redirect:http://localhost:8080/";
     }
 
 }

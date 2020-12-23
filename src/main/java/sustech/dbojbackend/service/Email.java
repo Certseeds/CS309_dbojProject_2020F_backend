@@ -48,7 +48,7 @@ public class Email {
 
     public void sendEmailToupLevel(User user, String token) {
         SimpleMailMessage msg = getSimpleMailMessage(user, SubjectUpLevel);
-        msg.setText(String.format("%s%s", "localhost:8888/login/reset?token=", token));
+        msg.setText(String.format("%s%s", "localhost:8888/upLevel?token=", token));
         try {
             mailSender.send(msg);
         } catch (MailException ex) {

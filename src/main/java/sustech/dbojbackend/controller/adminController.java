@@ -3,23 +3,31 @@ package sustech.dbojbackend.controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import sustech.dbojbackend.annotatin.needToken;
 import sustech.dbojbackend.exception.globalException;
 import sustech.dbojbackend.model.CommitResultType;
 import sustech.dbojbackend.model.SqlLanguage;
+import sustech.dbojbackend.model.UserLevel;
 import sustech.dbojbackend.model.response.infoApiResponse;
 import sustech.dbojbackend.model.response.infoStatusResponse;
+import sustech.dbojbackend.model.response.userListResponse;
 import sustech.dbojbackend.repository.CommitLogRepository;
 import sustech.dbojbackend.repository.CommitResultRepository;
 import sustech.dbojbackend.repository.QuestionDetailRepository;
+import sustech.dbojbackend.repository.UserRepository;
 
 import javax.annotation.Resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 
 @RestController
 public class adminController {
+    @Resource
+    UserRepository userRepository;
+
     @Resource
     CommitLogRepository commitLogRepository;
 
@@ -78,5 +86,17 @@ public class adminController {
             }
         }
         return new infoApiResponse(qid, maxRunTime, LongValueList);
+    }
+
+    @GetMapping("/userList")
+    @needToken(UserLevel.ADMIN)
+    public List<userListResponse> userList() {
+        var ListUserListResponse = new ArrayList<userListResponse>();
+        var users = userRepository.findAll();
+        for (var user : users) {
+            var listUser = new userListResponse(user.getId(), user.getUserName(), user.getEmail());
+            ListUserListResponse.add(listUser);
+        }
+        return ListUserListResponse;
     }
 }
