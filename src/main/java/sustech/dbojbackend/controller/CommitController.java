@@ -224,12 +224,18 @@ public class CommitController {
     @PostMapping("/create")
     @needToken(UserLevel.ADMIN)
     public Question CommitCreateQuestion(@RequestBody CommitCreateQuestion ccq) {
-        var question = new Question(ccq.getName(), ccq.getDescription(), ccq.getDDL());
+        var question = new Question(ccq.getQuestionTitle(), ccq.getDescription(), ccq.getDeadline());
         try {
-            return questionRepository.save(question);
+            questionRepository.save(question);
         } catch (Exception e) {
             throw new globalException.ForbiddenException("unknown error ");
         }
+        var maxQuestionsOrderInTheDataBase = questionRepository
+                .findAll()
+                .stream()
+                .max(Comparator.comparing(Question::getProgramOrder))
+                .get();
+        return maxQuestionsOrderInTheDataBase;
     }
 
     @Modifying
@@ -250,6 +256,7 @@ public class CommitController {
                 questionBuild.setProgramOrder(request.getProgramOrder());
                 questionBuild.setBuildScript(s);
                 questionBuild.setLanguage(request.getLanguage());
+                questionBuild.setTableOrder(0L);
                 questionBuildRepository.save(questionBuild);
             }
             return State.SUCCESS;

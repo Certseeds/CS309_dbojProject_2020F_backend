@@ -25,6 +25,8 @@ insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES ('12345678', md5('67890'), 0, 'test@case3.com');
 insert into USER_TABLE (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES ('123456789', md5('67890'), 1, 'test@case4.com');
+select * from user_table;
+delete from user_table where user_id = 5;
 CREATE TABLE COMMIT_LOG
 (
     COMMIT_LOG_ID    SERIAL PRIMARY KEY,
@@ -74,6 +76,8 @@ INSERT INTO QUESTION (NAME, DESCRIPTION, DEADLINE)
 VALUES ('homework3', 'this is the 3rd homework', cast(extract(epoch from now()) + 21600 as bigint));
 select *
 from question;
+delete from question where program_order >3;
+
 CREATE TABLE QUESTION_DETAIL
 (
     PROGRAM_ORDER  INT  NOT NULL REFERENCES QUESTION (PROGRAM_ORDER),
@@ -83,6 +87,7 @@ CREATE TABLE QUESTION_DETAIL
     MEMORY         INT  NOT NULL,
     PRIMARY KEY (PROGRAM_ORDER, LANGUAGE)
 );
+select * from question_build;
 Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
 VALUES (1, 'select * from usertable', 0, 3, 1024000);
 Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
@@ -101,6 +106,9 @@ Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, M
 VALUES (3, 'select * from usertable', 1, 3, 1024000);
 Insert into question_detail (PROGRAM_ORDER, CORRECT_SCRIPT, LANGUAGE, CPUTIME, MEMORY)
 VALUES (3, 'select * from usertable', 2, 3, 1024000);
+select * from question_detail;
+delete from question_detail where program_order >3;
+
 CREATE TABLE QUESTION_BUILD
 (
     QUESTION_TABLE_ORDER SERIAL PRIMARY KEY,
@@ -280,6 +288,8 @@ VALUES (''12345678'', ''67890'', 0, ''test@case3.com'');
 insert into usertable (USERNAME, PASSWORD, USER_LEVEL, EMALL)
 VALUES (''123456789'', ''67890'', 1, ''test@case4.com'');
 ', 2, 0);
+delete from question_build where program_order >3;
+select * from question_build where program_order > 3;
 select *
 from question_build;
 select *

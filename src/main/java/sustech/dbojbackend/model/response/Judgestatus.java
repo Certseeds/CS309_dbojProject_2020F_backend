@@ -3,6 +3,7 @@ package sustech.dbojbackend.model.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import sustech.dbojbackend.model.CommitResultType;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,7 +16,7 @@ public class Judgestatus implements Serializable {
     private String user;
     private String problem;
     private String table;
-    private String result;
+    private CommitResultType result;
     private Long time;
     private Long memory;
     private String language;
